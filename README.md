@@ -1,1 +1,1 @@
-"# js-cognos-addons"
+# js-cognos-addons
