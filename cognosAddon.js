@@ -13,8 +13,21 @@ function cognosAddon(jq, initialConfig){
       RSNameAtrr : 'lid'
     }
   },
-  globalConfig = {},
-  initQueue = [];
+  defaultConfigs = {
+    expandCollapse: {
+      sectionSuffix: '_collapsable_section',
+      buttonSuffix: 'collapse_button',
+      transition: 'slow',
+      suffixSearch: 'contains',
+      startCollapsed:true,
+      hasImages:false,
+      images:{
+        whenExpanded:'',
+        whenCollapsed: ''
+      }
+    }
+  },
+  globalConfig = {};
 
   function setGlobalConfig(newConfig){
     jq.extend(true,globalConfig,newConfig);
@@ -63,17 +76,16 @@ function cognosAddon(jq, initialConfig){
 
   function applyExpandCollapse(options){
 
-    var sectionSuffix = options.sectionSuffix || '_collapsable_section',
-        buttonSuffix = options.buttonSuffix || '_collapse_button',
+    options = jq.extend(true,{},defaultConfigs.expandCollapse,options);
 
-        $sections = jq(createDOMSelector(sectionSuffix,'contains'));
+    var $sections = jq(createDOMSelector(options.sectionSuffix,options.suffixSearch));
 
     $sections.each(function(i,e){
 
       var $table = jq(e),
           $header = $table.find('tr').first(),
           $section = $header.next(),
-          $button = $table.find(createDOMSelector(buttonSuffix,'contains'));
+          $button = $table.find(createDOMSelector(options.buttonSuffix,options.suffixSearch));
 
 
       if(options.hasImages){
@@ -83,7 +95,7 @@ function cognosAddon(jq, initialConfig){
               _$button = jq(this),
               $image = _$button.find('img');
 
-          _$section.toggle('slow',function(){
+          _$section.toggle(options.transition,function(){
 
             var _$section = jq(this),
                 _$image = $image;
@@ -99,7 +111,7 @@ function cognosAddon(jq, initialConfig){
       else{
         $button.on('click',function(){
           var _$section = $section;
-          _$section.toggle('slow');
+          _$section.toggle(options.transition);
         });
       }
     });
@@ -112,7 +124,7 @@ function cognosAddon(jq, initialConfig){
     setGlobalConfig: setGlobalConfig,
     init: init,
     applyExpandCollapse: applyExpandCollapse
-  }
+  };
 }
 
 var allOptions = {
@@ -135,6 +147,6 @@ var allOptions = {
     }
   }
 };
-cog = cognosAddon($);
+var cog = cognosAddon(jq);
 cog.applyExpandCollapse(allOptions.sectionTealExpandCollapseOptions);
 cog.applyExpandCollapse(allOptions.sectionOrangeExpandCollapseOptions);
