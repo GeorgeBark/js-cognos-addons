@@ -27,7 +27,11 @@ function cognosAddon(jq, initialConfig){
       }
     }
   },
-  globalConfig = {};
+  globalConfig = {
+    cognosHeaders:{
+      jqSelector: '.mainViewerTable > tbody > tr > .topRow'
+    }
+  };
 
   function setGlobalConfig(newConfig){
     jq.extend(true,globalConfig,newConfig);
@@ -117,13 +121,28 @@ function cognosAddon(jq, initialConfig){
     });
   }
 
+  function hideCognosHeaders(){
+    jq(globalConfig.cognosHeaders.jqSelector).hide();
+  }
+
+  function showCognosHeaders(){
+    jq(globalConfig.cognosHeaders.jqSelector).show();
+  }
+
   init(jq,initialConfig);
 
   return {
     getGlobalConfig: getGlobalConfig,
     setGlobalConfig: setGlobalConfig,
     init: init,
-    applyExpandCollapse: applyExpandCollapse
+    applyExpandCollapse: applyExpandCollapse,
+    cognosHeaders: {
+      show:showCognosHeaders,
+      hide:hideCognosHeaders
+    },
+    extras:{
+      createDOMSelector: createDOMSelector
+    }
   };
 }
 
@@ -148,5 +167,7 @@ var allOptions = {
   }
 };
 var cog = cognosAddon(jq);
+
+cog.cognosHeaders.hide();
 cog.applyExpandCollapse(allOptions.sectionTealExpandCollapseOptions);
 cog.applyExpandCollapse(allOptions.sectionOrangeExpandCollapseOptions);
