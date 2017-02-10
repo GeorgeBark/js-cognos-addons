@@ -1,7 +1,8 @@
 //"use strict";
 
-function cognosAddon(){
-  var constants: {
+function cognosAddon(jq, initialConfig){
+
+  var constants = {
     searchTypes: {
       'startsWith':'^=',
       'endsWith':'$=',
@@ -12,68 +13,67 @@ function cognosAddon(){
       RSNameAtrr : 'lid'
     }
   },
-  config = {},
+  globalConfig = {},
   initQueue = [];
 
-  function setConfig(newConfig){
-    config = jq.extend({},newConfig,true);
-  };
-
-  function getConfig(){
-    return config;
-  };
-
-  function addToInit(fn,props){
-    props = props || {};
-    initQueue.push({fn:fn,props:props});
+  function setGlobalConfig(newConfig){
+    jq.extend(true,globalConfig,newConfig);
   }
 
-  function init(props){
-    //window.jq = window.jq || jQuery.noConflict();
-    props = props || {};
+  function getGlobalConfig(){
+    return globalConfig;
+  }
 
-    var i;
 
-    for(i=0,i<initQueue,i++){
-      if(props.timeout){
-        setTimeout(cognosAddon.init,props.timeout);
-
-      }else{
-        cognosAddon.applyExpandCollapse(allOptions.sectionTealExpandCollapseOptions);
-        cognosAddon.applyExpandCollapse(allOptions.sectionOrangeExpandCollapseOptions);
-      }
+  function init(jq,newConfig){
+    if(jq === undefined){
+      console.log("Cognos Add-on requires an instance of jQuery to run");
+      return;
     }
 
-  };
+    setGlobalConfig(newConfig || {});
+
+    // var i;
+    //
+    // for(i=0,i<initQueue,i++){
+    //   if(props.timeout){
+    //     setTimeout(cognosAddon.init,props.timeout);
+    //
+    //   }else{
+    //
+    //   }
+    // }
+
+  }
 
   function createDOMSelector(searchItem,searchType){
 
     searchType = searchType || 'equalTo';
 
     var selector = "["
-      + cognosAddon.constants.cognosDOM.RSNameAtrr
-      + cognosAddon.constants.searchTypes[searchType]
+      + constants.cognosDOM.RSNameAtrr
+      + constants.searchTypes[searchType]
       + "'"
       + searchItem
       + "']";
 
     return selector;
 
-  },
+  }
 
   function applyExpandCollapse(options){
 
     var sectionSuffix = options.sectionSuffix || '_collapsable_section',
         buttonSuffix = options.buttonSuffix || '_collapse_button',
 
-        $sections = jq(cognosAddon.createDOMSelector(sectionSuffix,'contains'));
+        $sections = jq(createDOMSelector(sectionSuffix,'contains'));
 
     $sections.each(function(i,e){
 
       var $table = jq(e),
           $header = $table.find('tr').first(),
           $section = $header.next(),
-          $button = $table.find(cognosAddon.createDOMSelector(buttonSuffix,'contains'));
+          $button = $table.find(createDOMSelector(buttonSuffix,'contains'));
 
 
       if(options.hasImages){
@@ -104,10 +104,12 @@ function cognosAddon(){
       }
     });
   }
-  };
 
+  init(jq,initialConfig);
 
   return {
+    getGlobalConfig: getGlobalConfig,
+    setGlobalConfig: setGlobalConfig,
     init: init,
     applyExpandCollapse: applyExpandCollapse
   }
@@ -133,5 +135,6 @@ var allOptions = {
     }
   }
 };
-
-cognosAddon.init();
+cog = cognosAddon($);
+cog.applyExpandCollapse(allOptions.sectionTealExpandCollapseOptions);
+cog.applyExpandCollapse(allOptions.sectionOrangeExpandCollapseOptions);
