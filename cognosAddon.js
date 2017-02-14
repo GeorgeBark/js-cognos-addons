@@ -15,10 +15,10 @@ function cognosAddon(jq, initialConfig){
   },
   defaultConfigs = {
     expandCollapse: {
-      sectionSuffix: '_collapsable_section',
-      buttonSuffix: 'collapse_button',
+      sectionPartialName: '_collapsable_section',
+      buttonPartialName: 'collapse_button',
       transition: 'slow',
-      suffixSearch: 'contains',
+      partialNameSearch: 'contains',
       startCollapsed:true,
       hasImages:false,
       images:{
@@ -82,14 +82,14 @@ function cognosAddon(jq, initialConfig){
 
     options = jq.extend(true,{},defaultConfigs.expandCollapse,options);
 
-    var $sections = jq(createDOMSelector(options.sectionSuffix,options.suffixSearch));
+    var $sections = jq(createDOMSelector(options.sectionPartialName,options.partialNameSearch));
 
     $sections.each(function(i,e){
 
       var $table = jq(e),
           $header = $table.find('tr').first(),
           $section = $header.next(),
-          $button = $table.find(createDOMSelector(options.buttonSuffix,options.suffixSearch));
+          $button = $table.find(createDOMSelector(options.buttonPartialName,options.partialNameSearch));
 
 
       if(options.hasImages){
@@ -148,8 +148,8 @@ function cognosAddon(jq, initialConfig){
 
 var allOptions = {
   sectionTealExpandCollapseOptions:{
-    sectionSuffix: '_collapsable_section_teal',
-    buttonSuffix: 'collapse_button',
+    sectionPartialName: 'COLLAP_SEC_TEAL_',
+    buttonPartialName: 'COLLAP_BTN_TEAL',
     hasImages:true,
     images:{
       whenExpanded:'../samples/images/GSM Images/arrow_teal_up.png',
@@ -157,8 +157,8 @@ var allOptions = {
     }
   },
   sectionOrangeExpandCollapseOptions:{
-    sectionSuffix: '_collapsable_section_orange',
-    buttonSuffix: 'collapse_button',
+    sectionPartialName: 'COLLAP_SEC_ORANGE_',
+    buttonPartialName: 'COLLAP_BTN_ORANGE_',
     hasImages:false,
     images:{
       whenExpanded:'../samples/images/GSM Images/arrow_orange_up.png',
